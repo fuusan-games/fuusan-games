@@ -6,7 +6,7 @@
 
 | ゲーム | 人数 | |
 |---|---|---|
-| [ノーサンキュー！](https://fuusan-games.github.io/nothanks-online/) | 3〜7人 | オンライン・対戦 |
+| [いらないクマ！](https://fuusan-games.github.io/iranai-kuma/) | 3〜7人 | オンライン・対戦 |
 | [おぼえてオーダー！〜ふーさんの森カフェ〜](https://fuusan-games.github.io/oboete-order/) | 2〜6人 | オンライン・協力 |
 | [封魔の刻](https://fuusan-games.github.io/fuuma-no-toki/) | 1〜5人 | オンライン・協力 |
 | [たとえてナラベ！](https://fuusan-games.github.io/tatoete-narabe/) | 2〜10人 | オンライン・協力 |
