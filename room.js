@@ -76,5 +76,6 @@
   P.init = function () {};
   var origNext = P.next;
   P.next = function (g) { conns.forEach(function (c) { try { c.send({ t: 'fuu-goto', game: g }); } catch (e) {} }); setTimeout(function () { P.go(g, me); }, 900); };
+  P.status = function () { return me && me.host ? { host: 1, n: conns.filter(function (c) { return c.open && c.pname; }).length } : { host: 0, joined: !!(hostConn && hostConn.open) }; };
   if (P.info) (P.info.host ? openHost : openGuest)(P.info);
 })();
