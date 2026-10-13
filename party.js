@@ -16,7 +16,7 @@
     ['niwatoridori', '🐔', 'ニワトリドリ']
   ];
   // パーティー対応済みのゲーム（順次ふやす）
-  var READY = ['shitterukko', 'hentekko-paint', 'nothanks-online', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin'];
+  var READY = ['shitterukko', 'hentekko-paint', 'nothanks-online', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin', 'moribiraki'];
   var HUB = 'fuusan-games';
   var SS = 'fuu-party';
   var Q = new URLSearchParams(location.search);
