@@ -16,7 +16,7 @@
     ['niwatoridori', '🐔', 'ニワトリドリ']
   ];
   // パーティー対応済みのゲーム（順次ふやす）
-  var READY = ['shitterukko', 'hentekko-paint', 'nothanks-online'];
+  var READY = ['shitterukko', 'hentekko-paint', 'nothanks-online', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin'];
   var HUB = 'fuusan-games';
   var SS = 'fuu-party';
   var Q = new URLSearchParams(location.search);
@@ -48,7 +48,7 @@
   function css() {
     if (document.getElementById('fuuPartyCss')) return;
     var s = document.createElement('style'); s.id = 'fuuPartyCss';
-    s.textContent = '#fuuPartyBtn{position:fixed;left:8px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:99990;border:0;border-radius:999px;padding:8px 13px;font:700 13px/1 system-ui,sans-serif;background:#ff7a59;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.25)}' +
+    s.textContent = '#fuuPartyBtn{position:fixed;left:0;top:42%;z-index:99990;border:0;border-radius:0 999px 999px 0;padding:8px 8px 8px 5px;font:700 18px/1 system-ui,sans-serif;opacity:.85;background:#ff7a59;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.25)}' +
       '#fuuPartyBtn.guest{background:#555;opacity:.85;font-weight:600}' +
       '#fuuPartySheet{position:fixed;inset:0;z-index:99991;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}' +
       '#fuuPartySheet .in{background:#fff;color:#222;width:100%;max-width:520px;max-height:80vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px 12px calc(14px + env(safe-area-inset-bottom));font:14px system-ui,sans-serif}' +
@@ -60,6 +60,7 @@
   function openSheet() {
     if (!opts || !opts.isHost()) return;
     if (opts.canSwitch && !opts.canSwitch()) { alert('ゲーム中は移れません。終わってから（またはロビーで）選んでね'); return; }
+    if (opts.inGame && opts.inGame() && !confirm('ゲームの途中です。このゲームをやめて、みんなで別のゲームに移りますか？')) return;
     sheet = document.createElement('div'); sheet.id = 'fuuPartySheet';
     sheet.innerHTML = '<div class="in"><h3>🎲 つぎのゲームを選ぶ</h3><p>部屋 ' + info.code + ' のメンバー全員で移動します（部屋の作り直しは不要）</p>' +
       '<button class="g" data-g="' + HUB + '">🏠 ひろばの部屋にもどる</button>' +
@@ -79,7 +80,7 @@
     btn.classList.toggle('guest', !h);
     var can = !opts.canSwitch || opts.canSwitch();
     btn.style.display = (h ? can : true) ? '' : 'none';
-    btn.textContent = h ? '🎲 つぎのゲーム' : '🏠 部屋 ' + info.code;
+    btn.textContent = h ? '🎲' : '🏠'; btn.title = h ? 'つぎのゲーム（みんなで移動）' : 'みんなの部屋 ' + info.code; btn.setAttribute('aria-label', btn.title);
   }
   var P = {
     info: info, games: GAMES, ready: READY, hub: HUB, urlFor: urlFor, go: go, leave: leave, norm: norm,
