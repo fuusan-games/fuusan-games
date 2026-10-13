@@ -25,6 +25,8 @@
 | [とどけ！こいぶみ 〜ふーさんたちの お城でドキドキ大作戦〜](https://fuusan-games.github.io/todoke-koibumi/) | 2〜6人 | オンライン・対戦 |
 | [すくすくガーデン 〜ふーさんたちの 小さい順ならべ〜](https://fuusan-games.github.io/sukusuku-garden/) | 2〜5人 | オンライン・対戦 |
 | [王国争覇 〜ふーさんたちの デッキ構築バトル〜](https://fuusan-games.github.io/oukoku-souha/) | 2〜4人 | オンライン・対戦 |
+| [ふらっとクリーチャーズ 〜オリジナル モンスターバトル〜](https://fuusan-games.github.io/flat-creatures/) | 1〜2人 | オンライン・対戦 |
+| [幻獣デュエル 〜ネオ・アリーナ〜](https://fuusan-games.github.io/genjuu-duel/) | 1〜2人 | オンライン／1台・対戦 |
 | [ニワトリドリ🐔 〜こっこを そろえて おうちへ帰そう〜](https://fuusan-games.github.io/niwatoridori/) | 2〜6人 | オンライン・対戦 |
 | [しってるっこ 〜こたえを知ってる子が まぎれてる〜](https://fuusan-games.github.io/shitterukko/) | 1〜8人 | オンライン・パーティー |
 
