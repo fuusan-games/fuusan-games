@@ -13,10 +13,10 @@
     ['iro-tile-koubou', '🏛️', 'いろタイル工房'], ['suuretsu-jin', '🀄', '数列陣'], ['nanamekuri', '🃏', 'ななめくり'],
     ['gomoji-pitari', '✏️', 'ごもじでピタリ'], ['koroiro', '🎲', 'ころいろ'], ['yobigoe-yakata', '🕯️', 'よびごえの館'],
     ['todoke-koibumi', '💌', 'とどけ！こいぶみ'], ['sukusuku-garden', '🌱', 'すくすくガーデン'], ['oukoku-souha', '👑', '王国争覇'],
-    ['niwatoridori', '🐔', 'ニワトリドリ']
+    ['niwatoridori', '🐔', 'ニワトリドリ'], ['flat-creatures', '🐲', 'ふらっとクリーチャーズ（2人）'], ['genjuu-duel', '🐉', '幻獣デュエル（2人）']
   ];
   // パーティー対応済みのゲーム（順次ふやす）
-  var READY = ['shitterukko', 'hentekko-paint', 'nothanks-online', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin', 'moribiraki'];
+  var READY = ['shitterukko', 'hentekko-paint', 'nothanks-online', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin', 'moribiraki', 'flat-creatures', 'genjuu-duel'];
   var HUB = 'fuusan-games';
   var SS = 'fuu-party';
   var Q = new URLSearchParams(location.search);
