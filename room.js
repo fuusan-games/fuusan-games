@@ -19,7 +19,7 @@
     if (!on) return;
     $('prCode').textContent = me.code;
     $('prList').innerHTML = members.map(function (m) { return '<span class="pm">' + (m.host ? '👑' : '🙂') + esc(m.name) + '</span>'; }).join('');
-    $('prHint').textContent = me.host ? '下のゲーム（🌐オンライン対応）をタップすると、全員でそのゲームに移ります' : 'ホストがゲームを選ぶと自動で移動します';
+    $('prHint').textContent = me.host ? '下の明るいカード（対応ゲーム）をタップすると、全員でそのゲームに移ります' : 'ホストがゲームを選ぶと自動で移動します';
   }
   function hostBroadcast() { members = [{ name: me.name, host: true }].concat(conns.filter(function (c) { return c.pname; }).map(function (c) { return { name: c.pname }; })); render(); conns.forEach(function (c) { try { c.send({ t: 'members', list: members }); } catch (e) {} }); }
   function openHost(inf) {
@@ -41,7 +41,7 @@
     function connect() {
       hostConn = peer.connect(PREFIX + inf.code, { reliable: true });
       hostConn.on('open', function () { tries = 0; status(''); hostConn.send({ t: 'hello', name: inf.name }); });
-      hostConn.on('data', function (m) { if (!m) return; if (m.t === 'members') { members = m.list; render(); } else P.handle(m); });
+      hostConn.on('data', function (m) { if (!m) return; if (m.t === 'members') { members = m.list; render(); } else if (m.t === 'fuu-goto' && /^[a-z0-9-]+$/.test(m.game)) setTimeout(function () { P.go(m.game, me); }, P.guestDelay); });
       hostConn.on('close', function () { status('ホストとの接続が切れました。再接続中…'); setTimeout(connect, 2000); });
     }
     peer.on('open', connect);

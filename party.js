@@ -98,8 +98,8 @@
       setTimeout(function () { go(game); }, 900);
     },
     // 参加者：受信メッセージを渡す。処理したら true
-    handle: function (m) { if (info && m && m.t === 'fuu-goto' && typeof m.game === 'string' && /^[a-z0-9-]+$/.test(m.game)) { go(m.game); return true; } return false; },
-    retries: 40, retryMs: 1500
+    handle: function (m) { if (info && m && m.t === 'fuu-goto' && typeof m.game === 'string' && /^[a-z0-9-]+$/.test(m.game)) { setTimeout(function () { go(m.game); }, P.guestDelay); return true; } return false; },
+    retries: 40, retryMs: 1500, guestDelay: 1500, watchMs: 5000
   };
   window.FuuParty = P;
 })();
