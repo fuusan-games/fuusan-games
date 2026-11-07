@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>ふらっと 支援者向けQ&amp;A（非公式の試作版）</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Noto Sans CJK JP", Meiryo, sans-serif; color: #2c3a39; background: #f5f7f6; line-height: 1.85; font-size: 16px; }
+  .demo-banner { background: #fff4d6; color: #5b4500; border-bottom: 2px solid #e8cf86; padding: 10px 6vw; font-size: 14px; }
+  header.site { padding: 20px 6vw; background: #fff; border-bottom: 1px solid #e3e9e4; }
+  .sub { font-size: 13px; color: #5f716f; }
+  .logo { font-weight: 800; font-size: 24px; color: #2f6f6a; }
+  main { padding: 20px 6vw 120px; max-width: 760px; }
+  h1 { font-size: 21px; color: #2f5f5c; margin: 0 0 10px; }
+  .card { background: #fff; border-radius: 12px; padding: 16px 20px; border: 1px solid #e3e9e4; margin: 14px 0; }
+  .card h2 { margin: 0 0 6px; font-size: 17px; color: #2f6f6a; }
+  .open-btn { display: inline-block; margin-top: 8px; padding: 12px 22px; border-radius: 999px; border: 0; background: #2f6f6a; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+  footer { text-align: center; padding: 20px; color: #7d8b89; font-size: 13px; }
+</style>
+<!-- ▼▼ 支援者向けQ&A ▼▼ -->
+<style>
+/* 問い合わせ対応チャットボット ウィジェット用スタイル
+   色は faq.js の themeColor で変更できます */
+.cb-root {
+  --cb-color: #2f7d6d;
+  --cb-bg: #f4f7f6;
+  --cb-text: #1f2a30;
+  position: fixed; right: 20px; bottom: 20px; z-index: 2147483000;
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Noto Sans CJK JP", Meiryo, sans-serif;
+  font-size: 16px; line-height: 1.8; color: var(--cb-text);
+}
+.cb-root *, .cb-root *::before, .cb-root *::after { box-sizing: border-box; }
+
+.cb-launcher {
+  display: flex; align-items: center; gap: 8px; margin-left: auto;
+  height: 58px; padding: 0 22px 0 18px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--cb-color); color: #fff; font: inherit; font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22); transition: transform .15s, box-shadow .15s;
+}
+.cb-launcher:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,.26); }
+.cb-launcher svg { width: 26px; height: 26px; }
+.cb-ico-close { display: none; }
+.cb-open .cb-launcher { width: 58px; padding: 0; justify-content: center; }
+.cb-open .cb-ico-open, .cb-open .cb-launcher-label { display: none; }
+.cb-open .cb-ico-close { display: block; }
+
+.cb-window {
+  position: absolute; right: 0; bottom: 74px;
+  width: 370px; height: min(680px, calc(100vh - 110px));
+  display: flex; flex-direction: column; overflow: hidden;
+  background: #fff; border-radius: 18px; box-shadow: 0 16px 48px rgba(0,0,0,.24);
+  animation: cb-pop .2s ease-out;
+}
+.cb-window[hidden] { display: none; }
+@keyframes cb-pop { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+
+.cb-header {
+  display: flex; align-items: center; gap: 10px; padding: 14px 14px 14px 16px;
+  background: var(--cb-color); color: #fff;
+}
+.cb-avatar { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 24px; }
+.cb-titles { flex: 1; min-width: 0; }
+.cb-title { font-weight: 700; font-size: 16px; }
+.cb-sub { font-size: 12px; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cb-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #7dffb0; margin-right: 6px; vertical-align: 1px; }
+.cb-close, .cb-reset {
+  width: 34px; height: 34px; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: #fff; font-size: 22px; line-height: 1;
+}
+.cb-reset { font-size: 19px; }
+.cb-close:hover, .cb-reset:hover { background: rgba(255,255,255,.18); }
+
+.cb-log { flex: 1; overflow-y: auto; padding: 16px 14px; background: var(--cb-bg);  }
+.cb-row { display: flex; flex-direction: column; margin-bottom: 12px; animation: cb-in .2s ease-out; }
+@keyframes cb-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.cb-bot { align-items: flex-start; }
+.cb-user { align-items: flex-end; }
+.cb-bubble { max-width: 86%; padding: 10px 14px; border-radius: 16px; word-break: break-word; }
+.cb-bot .cb-bubble { background: #fff; border: 1px solid #e3e8eb; border-top-left-radius: 4px; }
+.cb-user .cb-bubble { background: var(--cb-color); color: #fff; border-top-right-radius: 4px; }
+.cb-bubble a { color: var(--cb-color); }
+
+.cb-typing { display: flex; gap: 5px; padding: 14px 16px; }
+.cb-typing span { width: 8px; height: 8px; border-radius: 50%; background: #9aa7ae; animation: cb-blink 1.2s infinite; }
+.cb-typing span:nth-child(2) { animation-delay: .2s; }
+.cb-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes cb-blink { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
+
+.cb-extras { max-width: 92%; }
+.cb-hint { font-size: 13px; color: #63727a; margin: 8px 2px 4px; }
+.cb-chips, .cb-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.cb-chip, .cb-link {
+  font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--cb-color); background: #fff; color: var(--cb-color); text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.cb-chip:hover, .cb-link:hover { background: var(--cb-color); color: #fff; }
+.cb-link { background: var(--cb-color); color: #fff; font-weight: 700; }
+.cb-link:hover { filter: brightness(1.1); }
+
+.cb-form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #e3e8eb; background: #fff; }
+.cb-input {
+  flex: 1; min-width: 0; font: inherit; font-size: 16px; /* iOSのズーム防止 */
+  padding: 10px 14px; border: 1.5px solid #d5dde1; border-radius: 999px; outline: none;
+}
+.cb-input:focus { border-color: var(--cb-color); }
+.cb-send { width: 44px; height: 44px; flex: none; border: 0; border-radius: 50%; background: var(--cb-color); color: #fff; cursor: pointer; display: grid; place-items: center; }
+.cb-send svg { width: 20px; height: 20px; }
+.cb-foot { text-align: center; font-size: 11px; color: #8a979e; padding: 0 0 8px; background: #fff; }
+
+/* 吹き出し横のアイコン */
+.cb-with-avatar { flex-direction: row; align-items: flex-start; gap: 8px; }
+.cb-msg-avatar { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1px solid #dfe7e4; display: grid; place-items: center; font-size: 20px; line-height: 1; }
+.cb-col { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; max-width: calc(100% - 42px); }
+.cb-col .cb-bubble { max-width: 100%; }
+.cb-col .cb-extras { max-width: 100%; }
+
+/* スマートフォン：全画面表示 */
+@media (max-width: 480px) {
+  .cb-root { right: 12px; bottom: 12px; }
+  /* スマホでも「ふーさんに しつもん」の文字を出して、押しやすく大きめに */
+  .cb-launcher { height: 60px; padding: 0 20px 0 16px; font-size: 17px; }
+  .cb-window { position: fixed; inset: 0; width: 100%; height: 100%; height: 100dvh; border-radius: 0; bottom: auto; }
+  .cb-open .cb-launcher { display: none; }
+  .cb-header { padding-top: max(14px, env(safe-area-inset-top)); }
+  .cb-foot { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .cb-bubble { max-width: 100%; }
+  .cb-chip, .cb-link { font-size: 15px; padding: 9px 15px; }
+  .cb-close, .cb-reset { width: 44px; height: 44px; }
+}
+/* 案内係：大きいボタン（カテゴリ・質問リスト・じゅんばん紹介） */
+.cb-menu .cb-chips, .cb-catlist .cb-chips { flex-direction: column; align-items: stretch; }
+.cb-menu-btn, .cb-q-btn, .cb-tour-btn {
+  text-align: left; border-radius: 14px; min-height: 48px; padding: 11px 16px; font-size: 16px; line-height: 1.4;
+}
+.cb-tour-btn { background: var(--cb-color); color: #fff; font-weight: 700; }
+.cb-tour-btn:hover { filter: brightness(1.1); }
+.cb-next { background: var(--cb-color); color: #fff; font-weight: 700; min-height: 44px; }
+.cb-back, .cb-more { min-height: 44px; border-style: dashed; }
+.cb-chip[hidden] { display: none; }
+.cb-menu, .cb-catlist { width: 100%; }
+html.cb-lock, html.cb-lock body { overflow: hidden; }
+
+/* メニュー（☰ を おしたときだけ 出る） */
+.cb-menu-toggle { flex: none; height: 44px; padding: 0 12px; border: 1.5px solid var(--cb-color); border-radius: 22px; background: #fff; color: var(--cb-color); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.cb-menu-toggle[aria-expanded="true"] { background: var(--cb-color); color: #fff; }
+.cb-sheet { position: absolute; left: 0; right: 0; bottom: 64px; max-height: 70%; display: flex; flex-direction: column; background: #fff; border-top: 1px solid #e3e8eb; border-radius: 16px 16px 0 0; box-shadow: 0 -6px 20px rgba(0,0,0,.12); z-index: 5; }
+.cb-sheet[hidden] { display: none; }
+.cb-sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 6px; }
+.cb-sheet-title { font-weight: 700; font-size: 16px; }
+.cb-sheet-close { width: 40px; height: 40px; border: 0; background: transparent; font-size: 24px; cursor: pointer; color: #555; }
+.cb-sheet-body { overflow-y: auto; padding: 4px 14px 14px; }
+.cb-sheet-list { display: flex; flex-direction: column; gap: 8px; }
+.cb-sheet-list .cb-chip { text-align: left; width: 100%; }
+.cb-scrim { position: absolute; left: 0; right: 0; top: 0; background: rgba(0,0,0,.28); z-index: 4; }
+.cb-scrim[hidden] { display: none; }
+.cb-close, .cb-sheet-close { min-width: 44px; min-height: 44px; }
+.cb-sheet-close { width: 44px; height: 44px; }
+
+/* 支援者向け：回答の見出し */
+.cb-ans-title { font-weight: 700; color: var(--cb-color); border-bottom: 1px solid #e3e8eb; padding-bottom: 4px; margin-bottom: 6px; }
+.cb-hint { font-size: 13px; }
+
+</style>
+<script>
+/* =====================================================================
+ *  ふらっと 支援者向け Q&A（非公式の試作版）設定ファイル
+ *  対象：相談支援専門員など、相談支援業務に携わる支援者の方
+ *  （毎月の Zoom 説明会の内容を、チャットで確認できるようにしたものです）
+ *
+ *  回答のもと：
+ *   - ふらっと 説明会資料（PDF・管理者 提供／2026年11月 受領）
+ *   - ふらっと 管理者への聞き取り（2026-10-12）
+ *   - ふらっと 管理者 提供の所在地情報（移転先：中央区本町西3-2-23）
+ *   - 管理者からの確認（2026-11-04：オンライン居場所「おうちdeふらっと」）
+ *   - 公開ページ（社会福祉法人 独歩・さいたま市）
+ *  ・資料にない内容は作らず、「確認中」「お問い合わせください」と案内します。
+ *  ・ふらっと直通の電話番号・メールアドレス、スタッフの個人名は掲載しません。
+ *  ・説明会資料の「利用のイメージ（架空の事例）」は、管理者の確認待ちのため掲載していません。
+ * ===================================================================== */
+(function () {
+  var URL_FLAT = "https://doppo.or.jp/flat";
+  var URL_DOPPO = "https://www.doppo.or.jp/";
+  var URL_CENTER = "https://www.city.saitama.lg.jp/002/003/004/003/001/p117045.html";
+  var URL_CHIMANE = "https://doppo.or.jp/chimane";
+  var SRC_PDF = "ふらっと 説明会資料（管理者 提供）";
+  var SRC_HEAR = "ふらっと 管理者への聞き取り（2026-10-12）";
+  var SRC_PLACE = "ふらっと 管理者 提供の所在地情報";
+  var SRC_OUCHI = "管理者からの確認（2026-11-04）";
+  var CENTER_TEL = "さいたま市発達障害者支援センター：048-859-7422（平日 9時〜17時）";
+  var TBC = "\n\n※この点は現在確認中です。発達障害者支援センターへお問い合わせください。";
+
+  window.CHATBOT_CONFIG = {
+    botName: "ふらっと 支援者向けQ&A",
+    shopName: "さいたま市発達障害者社会参加事業 ふらっと（非公式の試作版）",
+    avatar: "🌿",
+    showMessageAvatar: true,
+    fuzzyThreshold: 0.75,
+    themeColor: "#2f6f6a",
+    launcherLabel: "支援者向けQ&A",
+    placeholder: "ご質問を入力してください",
+    footerText: "非公式の試作版です。最新情報は発達障害者支援センターへご確認ください。",
+    welcomeMessage:
+      "こんにちは。ふらっと（さいたま市発達障害者社会参加事業）の、支援者の方向けのご案内です。\n毎月の説明会でお伝えしている内容を、こちらでご確認いただけます。\n\nご質問を入力いただくか、下の「☰ メニュー」から項目をお選びください。",
+    menuMessage: "知りたい項目をお選びください。\n文章でご質問いただくこともできます。",
+    menuLabel: "☰ ほかの項目を見る",
+    relatedHint: "関連する項目：",
+    nextLimit: 3,
+
+    categories: [
+      { id: "gaiyou", icon: "🏠", label: "事業概要・対象者",
+        faqs: ["about", "target", "gray", "forwhom", "chigai", "heiyou", "riyousha", "staff", "operator"] },
+      { id: "jikan", icon: "🕘", label: "開所日・時間",
+        faqs: ["hours", "schedule", "kaisuu", "renraku", "yoteihyou", "weather"] },
+      { id: "service", icon: "🧩", label: "サービス内容",
+        faqs: ["services", "ibasho", "kouza", "kouza_moushikomi", "taiken", "yoka", "soudan_flat", "event", "goods"] },
+      { id: "kobetsu", icon: "👤", label: "個別対応・予約",
+        faqs: ["kobetsu", "kobetsu_waku", "kobetsu_yoyaku"] },
+      { id: "shucchou", icon: "🚌", label: "出張居場所支援・おうちdeふらっと",
+        faqs: ["shucchou", "ouchi"] },
+      { id: "flow", icon: "📋", label: "利用までの流れ（紹介・登録）",
+        faqs: ["flow", "kengaku", "shiensha_only", "touroku", "shorui", "setsumeikai"] },
+      { id: "access", icon: "📍", label: "施設・アクセス",
+        faqs: ["place", "parking", "rooms", "rest", "shizuka", "lunch", "wifi", "nimotsu"] },
+      { id: "faq", icon: "❓", label: "よくある質問",
+        faqs: ["price", "mochimono", "shogai", "joho", "tomodachi", "trouble", "rules", "namae", "contact", "chimane", "unknown"] },
+    ],
+
+    fallbackMessage: [
+      "申し訳ありません。そのご質問には、こちらではお答えできませんでした。\n言葉を変えてご質問いただくか、「☰ メニュー」から項目をお選びください。\n\n掲載のない内容は、さいたま市発達障害者支援センターへお問い合わせください。",
+    ],
+    contact: {
+      phoneHours: "発達障害者支援センター：平日 9時〜17時",
+      links: [{ label: "📞 発達障害者支援センター 048-859-7422", url: "tel:0488597422" }],
+    },
+    labels: {
+      short: "ご質問の内容を、もう少し詳しく入力してください。\n「☰ メニュー」から項目を選ぶこともできます。",
+      ambiguous: "どちらについてのご質問でしょうか。お選びください。",
+    },
+
+    // あいさつ等（短い入力のときだけ反応します）
+    smallTalk: [
+      { id: "hello", keywords: ["こんにちは", "こんばんは", "おはよう", "はじめまして", "よろしく", "もしもし"],
+        answer: "こんにちは。ふらっとについて、知りたいことをご入力ください。\n「☰ メニュー」から項目を選ぶこともできます。" },
+      { id: "thanks", keywords: ["ありがとう", "助かりました", "たすかりました", "わかりました", "了解", "りょうかい", "承知"],
+        answer: "ご確認いただき、ありがとうございます。\nほかにもご不明な点があれば、ご入力ください。" },
+      { id: "bot", keywords: ["あなたは誰", "あなたはだれ", "あなたは何", "ボット", "ぼっと", "aiですか", "人間"],
+        answer: "こちらは、ふらっとの説明会資料などをもとに作った自動応答の案内（非公式の試作版）です。\n掲載のない内容は、発達障害者支援センターへお問い合わせください。" },
+    ],
+
+    // 曜日ごとの答え（「水曜日は何をしていますか」など）
+    days: {
+      "月": "月曜日は休館日です。",
+      "火": "火曜日は「居場所」です（9:00〜17:00）。お好きな時間に来所・退所できます。",
+      "水": "水曜日は「講座」と「個別対応（予約制）」の日です。\n講座は指定された時間帯に開催し、講座の時間帯以外は個別対応の枠になります（事前予約が必要）。\nオンライン居場所「おうちdeふらっと」（Zoom）も、水曜日の 14:00〜15:00 に行っています。\n出張居場所支援も、月1回程度、水曜日に開催しています。",
+      "木": "木曜日は「体験活動」（9:00〜12:00）と「居場所」（12:00〜17:00）です。",
+      "金": "金曜日は「居場所」です（9:00〜17:00）。お好きな時間に来所・退所できます。",
+      "土": "土曜日は「余暇活動」です（9:00〜17:00）。おもに、お仕事や学校に通っている方が安心して交流できる場です。",
+      "日": "日曜日は休館日です。",
+    },
+
+    faqs: [
+      /* ================= 事業概要・対象者 ================= */
+      {
+        id: "about",
+        title: "事業の目的・概要",
+        keywords: ["概要", "がいよう", "基本情報", "目的", "もくてき", "どんな事業", "どういう事業", "何の事業", "なんの事業", "事業内容", "社会参加事業", "ふらっととは", "ふらっとって", "どんなところ", "どんな施設", "どういう施設", "何をするところ", "なにをするところ", "趣旨", "ねらい", "目指して", "めざして", "コンセプト", "説明して"],
+        answer:
+          "ふらっとは「さいたま市発達障害者社会参加事業」です。\n\n【目的】\nさいたま市に居住する発達障害のある方に、家庭外で安心して過ごせる「居場所・体験活動の場」を提供することで、ストレスの軽減や、その人らしい地域での暮らし・社会参加を支援することを目的としています。\n\n【運営】\n2022年4月より、社会福祉法人 独歩がさいたま市から業務委託を受けて運営しています。\n\n【大切にしていること】\nすべてのサービスに共通して「自分のタイミング、ペース、スペースで」利用できることを大切にしています。",
+        next: ["target", "services", "flow"],
+        source: SRC_PDF,
+      },
+      {
+        id: "target",
+        title: "対象となる方",
+        keywords: ["対象", "たいしょう", "対象者", "対象になり", "対象になる", "利用条件", "利用要件", "条件", "要件", "誰が使え", "だれが使え", "どんな人が使え", "使える人", "利用できる人", "利用できる方", "年齢", "ねんれい", "何歳", "18歳", "１８歳", "高校生", "上限", "市外", "さいたま市以外", "市外在住", "在住", "住所要件", "手帳", "てちょう", "手帳なし", "手帳がない", "相談中", "繋がって", "つながって", "紹介できる"],
+        answer:
+          "【対象となる方】\n・さいたま市に住んでいる、発達障害のある方（原則として市内在住の方）\n・18歳以上（年齢の上限はありません）\n\n【利用の前提】\n次のいずれかに相談中の方が対象です。\n・さいたま市発達障害者支援センター\n・地域の障害者生活支援センター\n・そのほかの、成人の障害のある方の相談支援事業所\n\n【手帳・受給者証】\n・障害者手帳がなくても利用できます。\n・受給者証は不要です。",
+        next: ["gray", "flow", "forwhom"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "gray",
+        title: "診断がない方（グレーゾーン）も対象ですか",
+        keywords: ["診断", "しんだん", "診断なし", "診断がない", "未診断", "グレーゾーン", "グレーゾーンの方", "ぐれーぞーん", "グレー", "疑い", "うたがい", "傾向", "傾向がある", "傾向のある", "確定診断", "受診していない"],
+        answer:
+          "診断のない方（いわゆるグレーゾーンの方）は、ケースごとの判断になります。\n\nご本人の状況をふまえて、さいたま市発達障害者支援センターへご相談ください。\n" + CENTER_TEL,
+        next: ["target", "flow"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "forwhom",
+        title: "どんな方に向いていますか",
+        keywords: ["向いて", "むいて", "おすすめ", "どんな人に", "どういう人に", "こんな人", "ひきこもり", "引きこもり", "在宅", "家にいる", "居場所がない", "話し相手", "孤立", "生活リズム", "外出", "きっかけ", "対人", "人に慣れ", "ニーズ", "合う人", "合う方", "適して"],
+        answer:
+          "たとえば、次のような方にご利用いただいています。\n・家庭の外に、安心して過ごせる居場所がほしい\n・家族以外に話し相手がほしい\n・外出のきっかけがほしい\n・人に慣れていない\n・生活リズムを整えたい\n・社会参加をしたい\n\nまた、出張居場所支援は「居場所支援に興味はあるが、まずは慣れた場所から始めたい」という方にも向いています。\n\nお仕事や学校に通っているかどうかは、利用の条件ではありません。",
+        next: ["services", "shucchou", "flow"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "chigai",
+        title: "障害福祉サービス（就労系・デイケア等）との違い",
+        keywords: ["違い", "ちがい", "違う", "ちがう", "デイケア", "デイサービス", "就労移行", "就労継続", "b型", "a型", "作業所", "地域活動支援センター", "地活", "訓練", "通所施設", "障害福祉サービス", "福祉サービス"],
+        answer:
+          "ふらっとは、さいたま市の事業として行っている「居場所支援」です（運営：社会福祉法人 独歩）。\n\n・就労や訓練を目的とした場ではありません。\n・通所日の決まりはなく、お好きなときに来所できます。\n・行う活動も決まっておらず、ご本人の希望に合わせて自由に過ごせます。\n・利用にあたって受給者証は不要です。\n\nほかのサービスとの併用もできます。",
+        next: ["heiyou", "about"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "heiyou",
+        title: "ほかのサービスとの併用はできますか",
+        keywords: ["併用", "へいよう", "掛け持ち", "かけもち", "一緒に使え", "同時に", "両方", "ほかのサービス", "他のサービス", "他サービス", "通いながら", "利用中でも", "利用している人"],
+        answer:
+          "はい、併用できます。\n就労継続支援B型の事業所やデイケアなど、ほかのサービスと併用されている方もいらっしゃいます。",
+        next: ["chigai", "target"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "riyousha",
+        title: "利用者の人数・年代・男女比",
+        keywords: ["利用者", "りようしゃ", "何人", "なんにん", "人数", "にんずう", "年代", "ねんだい", "男女", "男性", "女性", "女性も", "男女比", "どんな人が来", "どんな方が来", "混んで", "こんで", "規模", "登録者"],
+        answer:
+          "【1日の利用人数（目安）】\n・平日：2〜3人程度\n・土曜日（余暇活動）：1〜5人程度\n※日によって、また登録者数によって変わります。\n\n【年代】10代（18歳以上）から50代までの方が利用しています。\n\n【男女比】男性 約7割、女性 約3割です。",
+        next: ["staff", "forwhom"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "staff",
+        title: "スタッフ体制",
+        keywords: ["スタッフ", "すたっふ", "職員", "しょくいん", "支援員", "人員", "体制", "何人いる", "配置", "男性スタッフ", "女性スタッフ", "担当者", "管理者", "名前", "なまえ", "資格"],
+        answer:
+          "ふらっとのスタッフは現在4名（男性1名・女性3名）です。\n普段は、そのうち男性1名・女性1名の2名体制でいることが多いです。\n\nこちらでは、スタッフの個人名や勤務曜日は掲載していません。\nスタッフの詳しい紹介は、さいたま市発達障害者支援センターでご確認いただけます。",
+        next: ["riyousha", "contact"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "operator",
+        title: "運営法人・委託について",
+        keywords: ["運営", "うんえい", "法人", "独歩", "どっぽ", "委託", "いたく", "業務委託", "いつから", "開始", "始まった", "何年", "市の事業", "母体", "経営"],
+        answer:
+          "ふらっとは、さいたま市の事業です。\n2022年4月より、社会福祉法人 独歩がさいたま市から業務委託を受けて運営しています。",
+        links: [{ label: "社会福祉法人 独歩のホームページ", url: URL_DOPPO }],
+        next: ["about", "contact"],
+        source: SRC_PDF,
+      },
+
+      /* ================= 開所日・時間 ================= */
+      {
+        id: "hours",
+        title: "開所日・開所時間",
+        keywords: ["開所日", "開所時間", "かいしょ", "営業日", "営業時間", "開いて", "あいて", "土日", "平日", "何時", "なんじ", "時間", "じかん", "休館日", "休み", "やすみ", "休館", "定休", "祝日", "祝日は", "年末年始", "お盆", "ゴールデンウィーク", "gw", "連休", "いつ開", "いつあ", "曜日"],
+        answer:
+          "【開所日】火・水・木・金・土\n【時間】9:00〜17:00\n【休館日】日曜日・月曜日\n※大型連休（ゴールデンウィーク・お盆休み・年末年始など）はお休みです。\n※お休みは、月間予定表で事前にお知らせします。\n\n火・木・金・土は、9:00〜17:00の間でお好きな時間に来所し、お好きな時間にお帰りいただけます。\n水曜日は「講座」と「個別対応（予約制）」の日です。",
+        next: ["schedule", "yoteihyou", "kaisuu"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "schedule",
+        title: "週間スケジュール（曜日ごとの内容）",
+        keywords: ["週間", "しゅうかん", "スケジュール", "すけじゅーる", "曜日ごと", "曜日別", "何曜日", "なんようび", "1週間", "一週間", "予定", "よてい", "プログラム", "日課"],
+        answer:
+          "1週間のスケジュールです。\n・月：休館日\n・火：居場所（9:00〜17:00）\n・水：講座／個別対応（予約制）\n・木：体験活動（9:00〜12:00）・居場所（12:00〜17:00）\n・金：居場所（9:00〜17:00）\n・土：余暇活動（9:00〜17:00）\n・日：休館日\n\nあわせて、水曜日 14:00〜15:00 にオンライン居場所「おうちdeふらっと」（Zoom）を行っています。\n※詳しい日程は、月間予定表でお知らせします。",
+        next: ["services", "kobetsu", "ouchi"],
+        source: SRC_PDF + " / " + SRC_OUCHI,
+      },
+      {
+        id: "kaisuu",
+        title: "利用頻度・途中来所や途中退出",
+        keywords: ["頻度", "ひんど", "利用頻度", "毎日", "通わないと", "通わなければ", "時間だけ", "だけ寄", "立ち寄", "回数", "かいすう", "週何回", "週に何回", "毎週", "月に何回", "どのくらい通", "通う頻度", "途中から", "途中で帰", "途中参加", "途中退出", "早退", "遅刻", "遅れて", "滞在時間", "短時間", "何時間", "最低", "ノルマ"],
+        answer:
+          "利用の回数や滞在時間に決まりはありません。\n\n・開所時間内であれば、お好きな時間に来所し、お好きな時間にお帰りいただけます。\n・講座や体験活動がある日も、途中からの参加・途中での退出ができます。\n・「毎週来所する」といった決まりもなく、ときどきの利用でも問題ありません。",
+        next: ["renraku", "hours"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "renraku",
+        title: "来所前・欠席時の連絡は必要ですか",
+        keywords: ["事前連絡", "連絡は必要", "連絡がいる", "連絡いる", "連絡要", "欠席", "けっせき", "休むとき", "休む時", "来る前", "来所前", "行く前", "予約なし", "予約不要", "予約は必要", "予約がいる", "アポなし", "ふらっと来"],
+        answer:
+          "来所前の連絡や、欠席の連絡は不要です（「欠席」という扱いがありません）。\n\n※個別対応のみ、事前の予約が必要です。予約後にキャンセルする場合も連絡が必要です。\n※見学は、事前に日程を調整します（「利用までの流れ」をご覧ください）。",
+        next: ["kobetsu_yoyaku", "flow"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "yoteihyou",
+        title: "月間予定表について",
+        keywords: ["月間予定表", "予定表", "よていひょう", "カレンダー", "かれんだー", "月間予定", "今月の予定", "来月の予定", "講座の予定", "日程表"],
+        answer:
+          "月間予定表は、毎月、紙でお渡ししています。\nお休みの日なども、月間予定表で事前にお知らせします。\n\n※支援者の方への配布方法（データでの提供など）は、現在確認中です。",
+        next: ["hours", "kouza"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "weather",
+        title: "台風・大雨などの日の開所",
+        keywords: ["台風", "たいふう", "台風の日", "雨の日", "大雨", "おおあめ", "大雪", "雪", "悪天候", "天気", "警報", "災害", "地震", "電車が止"],
+        answer:
+          "台風や大雨などの日も、原則として開所しています。\nただし、スタッフの通勤や交通状況により、開所時間が遅れることがあります。\n\n天候が悪い日や悪くなりそうな日は、来所前のご連絡をお願いしています（普段の相談先や、ご存じの連絡先へ）。",
+        next: ["hours"],
+        source: SRC_HEAR,
+      },
+
+      /* ================= サービス内容 ================= */
+      {
+        id: "services",
+        title: "サービスの全体像",
+        keywords: ["サービス", "さーびす", "メニュー", "支援内容", "支援の内容", "何ができ", "なにができ", "何をする", "なにをする", "活動内容", "活動", "かつどう", "種類", "どんな支援", "提供している"],
+        answer:
+          "ふらっとでは、次の支援を行っています。\n\n① 居場所支援（火・金 9:00〜17:00／木 12:00〜17:00）\n② 講座支援（水・指定された時間帯）\n③ 体験活動支援（木 9:00〜12:00）\n④ 余暇活動支援（土 9:00〜17:00）\n⑤ 個別対応（水・講座の時間帯以外・予約制）\n⑥ 出張居場所支援（月1回程度・水曜日）\n⑦ オンライン居場所「おうちdeふらっと」（水 14:00〜15:00・Zoom）\n\nすべてのサービスに共通して「自分のタイミング、ペース、スペースで」をお伝えしています。",
+        next: ["ibasho", "kouza", "taiken"],
+        source: SRC_PDF + " / " + SRC_HEAR + " / " + SRC_OUCHI,
+      },
+      {
+        id: "ibasho",
+        title: "居場所支援の内容",
+        keywords: ["居場所支援", "居場所", "居場所って", "居場所では", "いばしょ", "フリースペース", "自由に過ごす", "自由に過ごせ", "何もしなくて", "なにもしなくて", "過ごし方", "すごしかた", "雑談"],
+        answer:
+          "【日時】火・金 9:00〜17:00／木 12:00〜17:00\n\n【ポイント】\n・安心して過ごせる居場所になるよう、スペースなどに配慮しています。\n・何をしてもよく、何もしなくても大丈夫です（好きなときに好きな活動を）。\n・話したいときは、スタッフと雑談したり、一緒に活動したりします。\n・何をしたいかわからないときは、スタッフが一緒に考えます。\n・皆と一緒に活動しても、個人の活動に専念してもかまいません。\n\n【過ごし方の例】\n・リビングで雑談やボードゲームをしながら過ごす\n・ソファーでひとりでのんびり過ごす\n・相談室で、プライベートな話や生活での困りごとを相談する\n・スペースに配慮してもらいながら、個人の活動に専念する",
+        next: ["shizuka", "kouza", "yoka"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "kouza",
+        title: "講座支援の内容",
+        keywords: ["講座", "こうざ", "教室", "パソコン教室", "映画鑑賞", "スポーツ", "折り紙", "おりがみ", "ビーズ", "プラバン", "お菓子作り", "おかしづくり", "料理", "趣味", "プログラム内容"],
+        answer:
+          "【日時】水曜日（指定された時間帯で開催）\n\n【ポイント】\n・生活に役立つ講座から趣味の講座まで、ニーズに合わせて幅広く開催しています。\n・途中参加・途中退出ができます。\n・まずは見学からでも大丈夫です。\n・少人数や個別の講座を多数開催しています。\n\n【講座の例】\n・初心者パソコン教室（タイピングから、表やチラシの作成などを個別に学ぶ）\n・映画鑑賞会\n・スポーツを楽しむ会（近くの公園でキャッチボールやバドミントンなど）\n・折り紙講座、ビーズ創作系講座、プラバン講座\n・お菓子作り講座\n\n※材料を使う講座などは、費用の一部をご負担いただくことがあります。\n※講座の内容・時間は、講座のチラシや月間予定表でお知らせしています。",
+        next: ["kouza_moushikomi", "kobetsu", "price"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "kouza_moushikomi",
+        title: "講座の申し込みは必要ですか",
+        keywords: ["講座の申し込み", "講座申し込み", "講座の申込", "申し込み", "もうしこみ", "申込", "エントリー", "参加申込", "定員", "講座の定員"],
+        answer:
+          "講座は材料を準備するため、できるだけ事前にお申し込みください。\nただし、申し込みをしていなくても、参加や見学をすることはできます。\n\n※講座ごとの定員は、こちらでは確認できていません。",
+        next: ["kouza", "price"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "taiken",
+        title: "体験活動支援の内容",
+        keywords: ["体験活動", "たいけんかつどう", "体験", "軽作業", "内職", "ボランティア", "ぼらんてぃあ", "清掃", "掃除", "そうじ", "作業", "就労準備", "仕事の練習", "創作物", "イラスト", "工賃", "こうちん", "お給料", "給料", "交通費"],
+        answer:
+          "【日時】木曜日 9:00〜12:00\n\n【ポイント】\n・創作物の作成、パソコン、清掃（ボランティア）など、ご本人に合った体験を選べます。\n・ご本人のペースで行えます（時間の縛りはありません）。疲れたら休憩や退出もできます。\n・何をしたらよいかわからない場合は、スタッフから提案します。\n・「わからない」「できない」でも大丈夫です。スタッフが一緒に活動します。\n\n【活動の例】\n・施設内：内職のような軽作業、創作物の作成、パソコンを使った資料やイラストの作成、施設内の清掃\n・施設外：施設周辺の清掃などのボランティア活動\n\n※工賃や交通費の支給はありません。",
+        next: ["ibasho", "kouza", "chigai"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "yoka",
+        title: "余暇活動支援の内容（土曜日）",
+        keywords: ["余暇活動", "よかかつどう", "余暇", "よか", "土曜", "どよう", "週末", "働いている人", "働いている方", "仕事帰り", "学生", "通学", "ゲーム", "げーむ", "switch", "スイッチ", "ボードゲーム", "交流"],
+        answer:
+          "【日時】土曜日 9:00〜17:00\nおもに、お仕事や学校に通っている方が、安心して交流できる場です。\n\n【ポイント】\n・安心して過ごせる、交流できるスペースに配慮しています。\n・ほかの方と交流しても、個人の活動に専念してもかまいません。\n・余暇グッズを使って、充実した時間を過ごせます。\n・何をしたいかわからないときは、スタッフから提案します。\n・好きなことを、ほかの方と共有できます。\n\n【過ごし方の例】\n・リビングで雑談や、好きなことの共有\n・Switchでのゲーム対戦\n・テレビゲームからレトロなボードゲームまで\n・パソコンやタブレットで動画や音楽を楽しむ",
+        next: ["ibasho", "tomodachi", "goods"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "soudan_flat",
+        title: "ふらっとでスタッフに相談できること",
+        keywords: ["相談できる", "そうだんできる", "スタッフに相談", "困りごと", "こまりごと", "悩み", "なやみ", "生活の相談", "相談室", "プライベートな話", "専門的な相談", "相談支援との役割分担", "役割分担"],
+        answer:
+          "学校・仕事・人間関係など、日常の困りごとはスタッフに話していただけます。\n相談室（完全個室）で、プライバシーに配慮しながら相談できます。\n\n発達障害に関する専門的な相談や、より詳しい相談は、現在相談中の相談支援事業所などで行っていただくようお伝えしています。",
+        next: ["kobetsu", "joho", "rooms"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "event",
+        title: "イベントはありますか",
+        keywords: ["イベント", "いべんと", "行事", "ぎょうじ", "夏祭り", "クリスマス", "季節", "外出イベント"],
+        answer:
+          "講座や出張居場所支援のほかに、さいたま市発達障害者支援センターが開催する夏と冬のイベントに、ふらっとも参加することがあります。\n詳しくは、月間予定表でご確認ください。",
+        next: ["kouza", "shucchou"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "goods",
+        title: "設備・余暇グッズ",
+        keywords: ["設備", "せつび", "備品", "道具", "グッズ", "パソコン", "タブレット", "テレビ", "dvd", "ゲーム機", "スクリーン", "キッチン", "電子レンジ", "冷蔵庫", "何がある", "なにがある"],
+        answer:
+          "現在、次のような設備・グッズがあります。\n・パソコン、タブレット\n・テレビゲーム（Switch など）\n・ボードゲーム、カードゲーム\n・パズル雑誌、紙 など\n・テレビ、DVDプレイヤー、大きなスクリーン\n・キッチンの電子レンジ・オーブントースター・冷蔵庫・ケトル\n・Wi-Fi\n\n※移転後の新しい場所では、設備やグッズが変わる可能性があります。",
+        next: ["wifi", "rooms", "lunch"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+
+      /* ================= 個別対応・予約 ================= */
+      {
+        id: "kobetsu",
+        title: "個別対応とは",
+        keywords: ["個別対応", "こべつたいおう", "個別", "こべつ", "1対1", "１対１", "一対一", "スタッフと1対1", "マンツーマン", "まんつーまん", "ひとりで使いたい", "ひとりで利用", "一人で施設", "ひとりで施設", "一人で使", "他の利用者がいない", "他の人を気にせず", "貸し切り", "集団が苦手", "集団が難しい"],
+        answer:
+          "個別対応は、水曜日の講座開催時間以外に行っている、予約制の支援です。\n\n【こんな方に】\n・スタッフに個別に相談したい方\n・スタッフと1対1で活動したい方\n・ほかの利用者を気にせず、ひとりで施設を利用したい方（ほかの利用者が利用していない時間帯に利用）\n\n【予約】\n・事前の予約が必要です。\n・キャンセルする場合も連絡が必要です。\n・詳しくは、ふらっとスタッフにご相談ください。",
+        next: ["kobetsu_waku", "kobetsu_yoyaku"],
+        source: SRC_PDF,
+      },
+      {
+        id: "kobetsu_waku",
+        title: "個別対応の時間枠（水曜日の例）",
+        keywords: ["枠", "わく", "時間枠", "個別対応の時間", "個別の時間", "何時から何時", "水曜日の時間", "水曜の時間", "コマ", "の枠", "枠が", "50分", "時間割", "タイムテーブル", "個別対応の枠", "対応の枠", "枠は何時"],
+        answer:
+          "水曜日の個別対応枠の例です。\n・9:00〜9:50　個別対応枠\n・10:00〜10:50　個別対応枠\n・11:00〜11:50　個別対応枠\n・12:00〜12:50　昼休憩\n・13:00〜13:50　講座\n・14:00〜14:50　講座\n・15:00〜15:50　個別対応枠\n・16:00〜16:50　個別対応枠\n\n※講座の開催時間によって、個別対応枠が変わる場合があります。あらかじめスタッフにご相談ください。",
+        next: ["kobetsu_yoyaku", "kobetsu"],
+        source: SRC_PDF,
+      },
+      {
+        id: "kobetsu_yoyaku",
+        title: "個別対応の予約・キャンセル方法",
+        keywords: ["予約方法", "よやくほうほう", "予約の仕方", "予約の取り方", "予約したい", "予約する", "予約", "よやく", "キャンセル", "きゃんせる", "取り消し", "変更したい", "日時変更", "個別対応の予約", "対応の予約", "対応のキャンセル"],
+        answer:
+          "個別対応は事前の予約が必要です。キャンセルする場合も連絡が必要です。\n予約について、説明会資料では「詳しくはふらっとスタッフまでご相談ください」とご案内しています。\n\n※まだ利用登録をしていない方の予約や、支援者の方からの予約の受け方は、現在確認中です。発達障害者支援センターへお問い合わせください。",
+        next: ["kobetsu_waku", "flow"],
+        source: SRC_PDF,
+      },
+
+      /* ================= 出張居場所支援・おうちdeふらっと ================= */
+      {
+        id: "shucchou",
+        title: "出張居場所支援",
+        keywords: ["出張居場所", "出張の居場所", "出張", "しゅっちょう", "出張居場所支援", "障害者総合支援センター", "総合支援センター", "多目的室", "コミュニティセンター", "コミセン", "慣れた場所", "出張の予定", "出張の日程"],
+        answer:
+          "障害者総合支援センターや、さいたま市内のコミュニティセンターを利用して行う居場所支援です。\n\n【開催】毎月、水曜日に月1回程度\n【主な開催場所】障害者総合支援センター 2F 多目的室（13:00〜15:00）\n※詳細は、出張居場所支援の予定表をご確認ください。\n※障害者総合支援センターでの出張居場所支援は、移転後も継続します。\n\n【こんな方に】\n・家族以外に話し相手がほしい\n・自宅以外に安心して過ごせる場所がほしい\n・居場所支援に興味はあるが、まずは慣れた場所から始めたい\n\n【参加を希望する場合】\n興味のある方は、発達障害者支援センターの担当の方にご相談ください。",
+        next: ["ouchi", "flow"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "ouchi",
+        title: "オンライン居場所「おうちdeふらっと」",
+        keywords: ["おうちdeふらっと", "おうちでふらっと", "おうち", "オンライン", "おんらいん", "zoom", "ズーム", "ずーむ", "リモート", "在宅で参加", "自宅から", "家から参加", "ウェブ", "web", "外出が難しい", "外に出られない"],
+        answer:
+          "オンライン居場所「おうちdeふらっと」を行っています。\n\n【方法】Zoom を使用\n【日時】水曜日 14:00〜15:00\n\n※参加の方法（参加用URLの受け取り方・事前登録の要否など）は、現在確認中です。発達障害者支援センターへお問い合わせください。",
+        next: ["shucchou", "flow"],
+        source: SRC_OUCHI,
+      },
+
+      /* ================= 利用までの流れ ================= */
+      {
+        id: "flow",
+        title: "紹介〜利用開始までの流れ",
+        keywords: ["流れ", "ながれ", "手順", "てじゅん", "手続き", "てつづき", "紹介", "しょうかい", "つなぐ", "繋ぐ", "つなげ", "利用開始", "利用するには", "利用したい", "使いたい", "使うには", "始めるには", "申請", "しんせい", "電子申請", "面談", "めんだん", "ステップ", "利用するにはどうすれば", "申し込め", "窓口", "まどぐち", "申し込み方法", "申込方法", "紹介したい", "本人を紹介", "利用申し込み", "本人が希望", "希望している"],
+        answer:
+          "紹介から利用開始までの流れです。\n\n① ご本人（ご家族）から「見学したい」「説明を聞きたい」「使ってみたい」というご希望をうかがう\n\n② 相談支援を担当している支援者の方から、さいたま市発達障害者支援センターへ連絡\n" + CENTER_TEL + "\n※電子申請や、発達障害者支援センターでの面談が入る場合もあります。\n\n③ 見学の日程を調整（見学は事前予約制です）\n\n④ 初回来所：施設内の案内・見学・体験\n※方によっては、その日に登録まで行うこともあります。\n\n⑤ 利用登録：「登録書」を記入（所要 約30分）。ルールの確認と、ご本人の特性の確認を行います。\n\n⑥ 利用開始：来所前・欠席時の連絡は不要です。開所時間内であれば、お好きな時間に来所できます（個別対応のみ予約制）。\n\n※見学をしたからといって、必ず登録しなければならないわけではありません。",
+        next: ["kengaku", "touroku", "shiensha_only"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "kengaku",
+        title: "見学・体験について",
+        keywords: ["見学", "けんがく", "見学の予約", "見学予約", "体験利用", "お試し", "おためし", "試しに", "下見", "施設見学", "見に行", "見てみたい", "同行", "どうこう", "付き添い", "つきそい", "一緒に行", "家族と一緒", "初回", "初日", "はじめて来", "初めて来"],
+        answer:
+          "【見学】\n・見学は事前に日程を調整します（予約制）。\n・ご本人が相談中の相談先から、さいたま市発達障害者支援センターへご連絡ください。その後、見学日を調整します。\n\n【初回来所の内容】\n施設内の案内・見学・体験（試しに利用）を行います。方によっては、その日に登録まで行うこともあります。\n\n【同行】\nご家族や支援者の方と一緒に見学に来られる方もいらっしゃいます。\n\n※見学後に、必ず登録しなければならないわけではありません。",
+        next: ["flow", "shiensha_only", "touroku"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "shiensha_only",
+        title: "支援者・ご家族だけでの相談・見学",
+        keywords: ["支援者だけ", "支援者のみ", "家族だけ", "家族のみ", "本人抜き", "本人なし", "本人が来られない", "本人不在", "先に見学", "支援者が見学", "支援者の見学", "事前に見学", "職員だけ", "相談員だけ", "本人より先"],
+        answer:
+          "はい。ご家族や支援者の方だけでの相談・見学もできます。\nまずは、さいたま市発達障害者支援センターへご連絡ください。\n" + CENTER_TEL,
+        next: ["flow", "setsumeikai"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "touroku",
+        title: "利用登録について（所要時間・内容）",
+        keywords: ["登録", "とうろく", "登録書", "利用登録", "所要時間", "どのくらいかか", "どれくらいかか", "契約", "けいやく", "アセスメント", "特性の確認", "見学したら登録", "必ず登録", "時間がかか", "どのくらい時間", "何分かか"],
+        answer:
+          "【登録の内容】\n・ふらっとの「登録書」をご記入いただきます。\n・ふらっとのルールを一緒に確認します。\n・スタッフがご本人の障害の特性を確認します。\n\n【所要時間】約30分です。\n\n※見学をしても、必ず登録しなければならないわけではありません。ゆっくりご検討いただけます。",
+        next: ["shorui", "flow", "shogai"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "shorui",
+        title: "必要な書類",
+        keywords: ["書類", "しょるい", "必要書類", "提出", "診断書", "意見書", "受給者証", "計画相談", "サービス等利用計画", "利用計画", "アセスメントシート", "情報提供書", "フェイスシート"],
+        answer:
+          "・受給者証は不要です。\n・利用の際は、ふらっとの「登録書」をご記入いただきます。\n\n※このほかに、支援者の方からの情報提供書類などが必要かどうかは、現在確認中です。発達障害者支援センターへお問い合わせください。",
+        next: ["touroku", "flow"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "setsumeikai",
+        title: "支援機関向けの説明会",
+        keywords: ["説明会", "せつめいかい", "説明会の申し込み", "説明会に参加", "オンライン説明会", "研修", "支援機関向け", "支援者向け", "事業説明", "資料がほしい", "パンフレット", "チラシ"],
+        answer:
+          "障害者生活支援センターの方などに向けて、Zoom によるオンライン説明会を行っています。\nこちらのQ&Aは、その説明会の内容をもとに作成しています。\n\n説明会のお申し込みは、ふらっとの紹介ページのフォームから行えます（お名前・センター名・電話番号・参加希望日を入力）。",
+        links: [{ label: "ふらっと紹介ページ（社会福祉法人 独歩）", url: URL_FLAT }],
+        next: ["flow", "about"],
+        source: URL_FLAT,
+      },
+
+      /* ================= 施設・アクセス ================= */
+      {
+        id: "place",
+        title: "所在地・アクセス",
+        keywords: ["場所", "ばしょ", "所在地", "住所", "じゅうしょ", "どこ", "アクセス", "あくせす", "最寄り", "もより", "最寄駅", "駅", "えき", "与野本町", "よのほんまち", "行き方", "いきかた", "道順", "地図", "ちず", "移転", "いてん", "引っ越し", "新しい場所", "本町西", "徒歩", "バス"],
+        answer:
+          "【所在地】さいたま市中央区本町西3-2-23\n（12月1日からの所在地です）\n\n【アクセス】JR埼京線「与野本町駅」西口から徒歩 約13〜14分\n与野公園の近く、白い二階建ての一軒家が目印です。\n\n※駐車場はありません。\n※自転車は、駐輪場ではありませんが、とめるスペースがあります。\n※道順に不安がある方は、ご相談ください。",
+        next: ["parking", "rooms"],
+        source: SRC_PLACE + " / " + SRC_HEAR,
+      },
+      {
+        id: "parking",
+        title: "駐車場・駐輪スペース",
+        keywords: ["駐車場", "ちゅうしゃじょう", "車", "くるま", "送迎", "送迎サービス", "そうげい", "駐輪", "ちゅうりん", "自転車", "じてんしゃ", "バイク", "原付", "車で行"],
+        answer:
+          "・駐車場はありません。\n・自転車は、駐輪場ではありませんが、とめるスペースがあります。\n\n電車の場合は、JR埼京線「与野本町駅」西口から徒歩 約13〜14分です。\n\n※送迎の有無は、こちらでは確認できていません。",
+        next: ["place"],
+        source: SRC_HEAR + " / " + SRC_PLACE,
+      },
+      {
+        id: "rooms",
+        title: "施設内の部屋",
+        keywords: ["部屋", "へや", "間取り", "まどり", "施設内", "リビング", "りびんぐ", "ソファー", "ソファ", "洋室", "個人ブース", "ブース", "パーテーション", "パーティション", "事務所", "相談室", "静養室", "簡易ベッド", "ベッド", "個室", "こしつ", "設備の様子", "中の様子"],
+        answer:
+          "説明会資料でご紹介している部屋です。\n・事務所（相談室・静養室）：完全個室で、プライバシーに配慮しながら相談できます。折りたたみの簡易ベッドがあり、静養する際に使えます。\n・リビング：雑談、テレビゲーム、ボードゲーム、パソコンやタブレットでの動画視聴など、ほかの方と交流しながら好きなことを共有できます。\n・洋室（ソファーの部屋）：ひとりでのんびりDVDを鑑賞したり、ほかの方とゲームを楽しんだりする部屋です。疲れたときはソファーで静養できます。\n・洋室（テーブルと椅子の部屋）：パソコンや学習などの個人活動や、少人数での活動に適した部屋です。パーテーションなどを使い、個人ブースのように利用できます（一人掛けソファー・個人ブースあり）。\n\n※12月1日の移転後は、部屋の構成が変わる可能性があります。移転後の詳細は現在確認中です。",
+        next: ["rest", "shizuka", "goods"],
+        source: SRC_PDF,
+      },
+      {
+        id: "rest",
+        title: "休憩・静養、体調不良時の対応",
+        keywords: ["休憩", "きゅうけい", "静養", "せいよう", "休める", "やすめる", "横になれ", "体調不良", "体調が悪", "具合", "パニック", "ぱにっく", "疲れたら", "つかれたら", "感覚過敏", "クールダウン", "休憩できる", "休める場所", "発作", "医療", "看護師"],
+        answer:
+          "疲れたときは休憩できます。途中で帰ることもできます。\n\n体調不良やパニックの際は、基本的にはご本人に対応していただいています。そのうえで、スタッフもできる限り個室や静養できる場所を用意するようにしています。\n\n※医療的な対応の可否は、こちらでは確認できていません。",
+        next: ["rooms", "shizuka"],
+        source: SRC_PDF + " / " + SRC_HEAR,
+      },
+      {
+        id: "shizuka",
+        title: "静かに過ごせますか（環境への配慮）",
+        keywords: ["静か", "しずか", "にぎやか", "賑やか", "うるさい", "音", "おと", "騒がしい", "人が多い", "混雑", "ひとりで過ごし", "一人で過ごし", "ひとりになれ", "刺激", "環境調整", "配慮", "合理的配慮"],
+        answer:
+          "ひとりで静かに過ごせるスペースはあります。パーテーションなどを使い、スペースに配慮しています。\n\nただし、利用者が多い日などは、静かに過ごすのが難しいこともあります。常に静かとは限りません。\n\nスタッフと1対1で過ごしたい場合や、ほかの利用者がいない時間帯に利用したい場合は、予約制の「個別対応」もご検討ください。",
+        next: ["kobetsu", "rooms"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "lunch",
+        title: "昼食について",
+        keywords: ["昼食", "ちゅうしょく", "お昼", "おひる", "昼ごはん", "ひるごはん", "ランチ", "お弁当", "おべんとう", "弁当", "食事", "しょくじ", "食べ", "飲み物", "のみもの", "給食", "食事提供"],
+        answer:
+          "昼食を持参して、ふらっとで食べることができます。\nお昼に外へ食べに行き、また戻ってくることもできます。\n\n使える設備：オーブントースター・電子レンジ・冷蔵庫・ケトル\n\n※食事の提供は、こちらでは確認できていません。",
+        next: ["mochimono", "goods"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "wifi",
+        title: "Wi-Fi・私物機器の利用",
+        keywords: ["wifi", "wi-fi", "ワイファイ", "わいふぁい", "ネット", "インターネット", "スマホ", "すまほ", "携帯", "持ち込み", "私物", "自分のパソコン", "充電", "じゅうでん", "コンセント", "イヤホン", "ヘッドホン"],
+        answer:
+          "Wi-Fi があります。\nご本人のスマートフォン、Switch・携帯ゲーム機、パソコンを持ち込んで使えます。\nコンセントでの充電や、イヤホンの使用もできます。",
+        next: ["goods", "mochimono"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "nimotsu",
+        title: "荷物の管理",
+        keywords: ["荷物", "にもつ", "ロッカー", "ろっかー", "預け", "あずけ", "貴重品", "盗難", "置き場", "荷物はどこ", "どこに置"],
+        answer:
+          "荷物を預ける場所はありません。\n持ち物は、ご本人に管理していただいています。",
+        next: ["mochimono"],
+        source: SRC_HEAR,
+      },
+
+      /* ================= よくある質問 ================= */
+      {
+        id: "price",
+        title: "利用料金",
+        keywords: ["料金", "りょうきん", "利用料", "費用", "ひよう", "お金", "おかね", "無料", "むりょう", "有料", "いくら", "自己負担", "負担", "材料費", "実費", "参加費"],
+        answer:
+          "ふらっとの利用料は無料です。\n\n※材料を使う講座などは、費用の一部をご負担いただくことがあります。\n※出張居場所支援・おうちdeふらっとの費用については、こちらでは確認できていません。",
+        next: ["kouza", "mochimono"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "mochimono",
+        title: "持ち物",
+        keywords: ["持ち物", "もちもの", "持っていく", "持参", "じさん", "必要なもの", "用意するもの", "準備するもの", "上履き", "スリッパ", "服装", "ふくそう"],
+        answer:
+          "必ず持ってこなければならない物はありません。\n昼食（お弁当）の持参もできます。\n\n※服装・上履きなどの指定は、こちらでは確認できていません。",
+        next: ["lunch", "wifi"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "shogai",
+        title: "障害特性の確認・開示について",
+        keywords: ["特性", "とくせい", "特性を", "特性は", "障害のこと", "障害について", "開示", "かいじ", "オープン", "クローズ", "話さないといけない", "伝える必要", "ほかの利用者に", "他の利用者に", "知られ"],
+        answer:
+          "登録の際に、スタッフがご本人の障害の特性を確認します。\n\n利用中に、ほかの利用者へご自身の障害について話す必要はありません。スタッフがうかがうのも、必要なことだけです。",
+        next: ["touroku", "joho"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "joho",
+        title: "ふらっとでの話は支援者に共有されますか",
+        keywords: ["情報共有", "じょうほうきょうゆう", "共有", "きょうゆう", "報告", "ほうこく", "連携", "れんけい", "様子を教えて", "利用状況", "モニタリング", "守秘", "秘密", "ひみつ", "プライバシー", "個人情報", "フィードバック"],
+        answer:
+          "ご本人がふらっとで話したことは、基本的にふらっとの中だけのこととして扱っています。相談先の支援者の方へ、わざわざお伝えすることはありません。\n\n※支援者の方とふらっととの連携の方法（利用状況の共有など）は、現在確認中です。発達障害者支援センターへお問い合わせください。",
+        next: ["soudan_flat", "shogai"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "tomodachi",
+        title: "ほかの利用者との交流",
+        keywords: ["友達", "ともだち", "友だち", "仲間", "なかま", "交流", "こうりゅう", "他の利用者と", "ほかの利用者と", "人間関係", "グループ", "集団活動", "利用者同士の交流", "同士の交流"],
+        answer:
+          "ふらっとは、一人ひとりが好きな過ごし方をする場所で、友だちをつくることを目的とはしていません。\n\nご本人と相手が望めば、ほかの利用者と交流できます。スタッフが間に入ることもあります。ひとりで過ごしても大丈夫です。",
+        next: ["trouble", "yoka"],
+        source: SRC_HEAR + " / " + SRC_PDF,
+      },
+      {
+        id: "trouble",
+        title: "利用者同士のトラブルへの対応",
+        keywords: ["トラブル", "とらぶる", "揉め", "もめ", "けんか", "喧嘩", "いじめ", "嫌なこと", "いやなこと", "問題が起き", "苦情"],
+        answer:
+          "利用者同士でトラブルがあったときは、スタッフが間に入って調整します。\nトラブルが起きないよう、事前にお話をすることもあります。",
+        next: ["rules", "tomodachi"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "rules",
+        title: "利用のルール",
+        keywords: ["ルール", "るーる", "決まりごと", "規則", "利用規約", "守ること", "きそく", "禁止", "注意事項", "約束", "マナー"],
+        answer:
+          "ふらっとのルールは、登録の際にご本人と一緒に確認します。\n\n※ルールの具体的な内容は、こちらでは掲載していません。",
+        next: ["touroku", "trouble"],
+        source: SRC_HEAR,
+      },
+      {
+        id: "namae",
+        title: "「ふらっと」の名前の由来",
+        keywords: ["名前の由来", "由来", "ゆらい", "名前の意味", "なぜふらっと", "ふらっとの意味", "ネーミング"],
+        answer: "「ふらっと」という名前には、\n・ふらっと立ち寄れる場所\n・社会の凸凹をなくす\nという意味が込められています。",
+        next: ["about"],
+        source: SRC_PDF,
+      },
+      {
+        id: "contact",
+        title: "問い合わせ先",
+        keywords: ["問い合わせ", "といあわせ", "問合せ", "連絡先", "れんらくさき", "電話番号", "でんわばんごう", "電話", "でんわ", "メール", "めーる", "メールアドレス", "連絡したい", "誰に聞け", "だれに聞け", "どこに聞け", "どこに連絡", "どこに申し込"],
+        answer:
+          "ご利用の相談・見学・体験のご希望は、さいたま市発達障害者支援センターへご連絡ください。\n" + CENTER_TEL + "\n\nすでにふらっとを利用中の方は、来所時にふらっとのスタッフへお声がけください。\n\n※こちらでは、ふらっと直通の連絡先は掲載していません。",
+        links: [{ label: "📞 発達障害者支援センター 048-859-7422", url: "tel:0488597422" }, { label: "発達障害者支援センターでの相談（さいたま市）", url: URL_CENTER }],
+        next: ["flow", "shiensha_only"],
+        source: URL_CENTER + " / " + SRC_HEAR,
+      },
+      {
+        id: "chimane",
+        title: "支援機関として発達障害の支援について相談したい",
+        keywords: ["地域支援マネジャー", "地域支援マネージャー", "ちまね", "マネジャー", "マネージャー", "コンサルテーション", "支援者として相談", "支援機関として", "事業所として相談", "支援方法", "対応に困って", "支援に困って", "スーパーバイズ"],
+        answer:
+          "発達障害のある方を支援している事業所などの方は、「発達障害者地域支援マネジャー」に相談できます（無料）。\n北部・東部（西区・北区・大宮区・見沼区・浦和区・緑区・岩槻区）の窓口は、社会福祉法人 独歩です。\n\n詳しくは、下のページをご覧ください。",
+        links: [{ label: "発達障害者地域支援マネジャー（独歩）", url: URL_CHIMANE }],
+        next: ["contact"],
+        source: URL_CHIMANE,
+      },
+      {
+        id: "unknown",
+        title: "こちらに掲載のない項目について",
+        keywords: ["タバコ", "たばこ", "喫煙", "きつえん", "電子タバコ", "ペット", "飲酒", "お酒", "保険", "傷害保険", "送り迎え", "利用期限", "利用期間", "何年まで", "卒業", "いつまで使え"],
+        answer:
+          "申し訳ありません。その点は、こちらではまだ確認できていません。\n\nさいたま市発達障害者支援センターへお問い合わせください。\n" + CENTER_TEL,
+        next: ["contact", "flow"],
+        source: SRC_HEAR,
+      },
+    ],
+  };
+})();
+
+</script>
+<script>
+/* =====================================================================
+ *  ふらっと 支援者向けQ&A ウィジェット本体（依存ライブラリなし）
+ *  faq.js（window.CHATBOT_CONFIG）を先に読み込んでください。
+ * ===================================================================== */
+(function () {
+  "use strict";
+  var C = window.CHATBOT_CONFIG;
+  if (!C) { console.error("[chatbot] faq.js（CHATBOT_CONFIG）が読み込まれていません"); return; }
+  /* ---------- 文字の正規化（日本語の表記ゆれ対策） ---------- */
+  function normalize(s) {
+    s = String(s || "").normalize("NFKC").toLowerCase();
+    // カタカナ → ひらがな
+    s = s.replace(/[\u30a1-\u30f6]/g, function (ch) { return String.fromCharCode(ch.charCodeAt(0) - 0x60); });
+    // 記号・空白・長音のゆれを除去
+    s = s.replace(/[\s、。，．,.!?！？「」『』（）()\[\]【】・~〜ー\-_:：;；"'“”‘’…]/g, "");
+    // 絵文字・顔文字の記号は無視
+    s = s.replace(/[\u2600-\u27bf\ud83c-\ud83e][\udc00-\udfff]?|[\ufe0f\u200d]/g, "");
+    // よくある 誤字・言いかえ（faq.js の synonyms）
+    for (var i = 0; i < SYN.length; i++) if (SYN[i][0] && s.indexOf(SYN[i][0]) !== -1) s = s.split(SYN[i][0]).join(SYN[i][1]);
+    return s;
+  }
+  var SYN = (C.synonyms || []).map(function (p) { return [baseNorm(p[0]), baseNorm(p[1])]; })
+    .sort(function (a, b) { return b[0].length - a[0].length; });
+  function baseNorm(x) {
+    x = String(x || "").normalize("NFKC").toLowerCase();
+    x = x.replace(/[\u30a1-\u30f6]/g, function (ch) { return String.fromCharCode(ch.charCodeAt(0) - 0x60); });
+    return x.replace(/[\s、。，．,.!?！？「」『』（）()\[\]【】・~〜ー\-_:：;；"'“”‘’…]/g, "");
+  }
+  function bigrams(s) {
+    var a = [];
+    for (var i = 0; i < s.length - 1; i++) a.push(s.substr(i, 2));
+    return a;
+  }
+  // 2文字ずつの一致率（Dice係数）でゆるく比較
+  function dice(a, b) {
+    var A = bigrams(a), B = bigrams(b);
+    if (!A.length || !B.length) return 0;
+    var used = {}, hit = 0;
+    for (var i = 0; i < A.length; i++) {
+      for (var j = 0; j < B.length; j++) {
+        if (!used[j] && A[i] === B[j]) { used[j] = 1; hit++; break; }
+      }
+    }
+    return (2 * hit) / (A.length + B.length);
+  }
+  // 入力文の中にキーワードに「近い」部分があるか（多少の誤字・送り仮名違いを許容）
+  function fuzzyContains(text, kw) {
+    if (kw.length < 3 || text.length < 2) return 0;
+    var best = 0;
+    for (var len = kw.length - 1; len <= kw.length + 1; len++) {
+      if (len < 2) continue;
+      for (var i = 0; i + len <= text.length; i++) {
+        var d = dice(text.substr(i, len), kw);
+        if (d > best) best = d;
+      }
+    }
+    return best;
+  }
+
+  // キーワードを事前に正規化
+  // enabled: false の項目は使わない（一時停止中のFAQ）
+  function prep(list) {
+    return (list || []).filter(function (item) { return item.enabled !== false; }).map(function (item) {
+      var kws = (item.keywords || []).concat(item.title ? [item.title] : []);
+      if (item.topic) item._topic = item.topic.map(normalize).filter(Boolean);
+      item._kw = kws.map(normalize).filter(function (k, i, arr) { return k && arr.indexOf(k) === i; });
+      return item;
+    });
+  }
+  var FAQS = prep(C.faqs);
+  var TALK = prep(C.smallTalk);
+
+  function scoreItem(text, item) {
+    var score = 0, hits = 0;
+    item._kw.forEach(function (kw) {
+      if (text.indexOf(kw) !== -1) {
+        score += 1 + kw.length * 0.5; hits++;
+      } else {
+        var f = fuzzyContains(text, kw);
+        if (f >= (C.fuzzyThreshold || 0.66)) score += (1 + kw.length * 0.5) * f * 0.6;
+      }
+    });
+    if (text === normalize(item.title)) score += 10;
+    return score + hits * 0.2;
+  }
+
+  function match(input) {
+    var text = normalize(input);
+    if (!text) return { best: null, others: [] };
+    var ranked = FAQS.map(function (f) { return { item: f, score: scoreItem(text, f) }; })
+      .filter(function (r) { return r.score >= 1.5; })
+      .sort(function (a, b) { return b.score - a.score; });
+    if (!ranked.length) return { best: null, others: [], ranked: [] };
+    var top = ranked[0].score;
+    var others = ranked.slice(1, 3).filter(function (r) { return r.score >= top * 0.6; }).map(function (r) { return r.item; });
+    var amb = null;
+    if (ranked[1]) {
+      var a = ranked[0].item, b = ranked[1].item;
+      var linked = (a.next || []).indexOf(b.id) !== -1 || (b.next || []).indexOf(a.id) !== -1;
+      if (!linked && ranked[1].score >= top * 0.97 && top >= 3) amb = [a, b];
+    }
+    return { best: ranked[0].item, others: others, score: top, ambiguous: amb, ranked: ranked };
+  }
+
+  /* ---------- 曜日の質問（「水曜日は何をしていますか」など） ---------- */
+  var DAYS = [["月", /月曜|げつよう/], ["火", /火曜|かよう/], ["水", /水曜|すいよう/], ["木", /木曜|もくよう/], ["金", /金曜|きんよう/], ["土", /土曜|どよう/], ["日", /日曜|にちよう/]];
+  var DAY_OK = { hours: 1, schedule: 1, services: 1, ibasho: 1, yoka: 1 };
+  function dayAnswer(text, m) {
+    if (!C.days) return null;
+    var hit = DAYS.filter(function (d) { return d[1].test(text); });
+    if (hit.length !== 1) return null;
+    if (m.best && !DAY_OK[m.best.id]) return null;
+    var day = hit[0][0];
+    return { id: "day:" + day, title: day + "曜日の内容", answer: C.days[day] + "\n\n※祝日や大型連休のお休みは、月間予定表でお知らせします。", next: ["schedule", "hours"] };
+  }
+
+  /* ---------- 判定 ---------- */
+  function decide(input) {
+    var text = normalize(input);
+    if (!String(input || "").trim()) return { type: "none" };
+    if (!text) return { type: "short" };
+    var plain = text.replace(/[^\u3041-\u309f\u4e00-\u9fffa-z0-9]/g, "");
+    if (plain.length <= 1) return { type: "short" };
+    var m = match(input);
+    var d = dayAnswer(text, m);
+    if (d) return { type: "faq", item: d, others: [] };
+    if (text.length <= 14) {
+      for (var i = 0; i < TALK.length; i++) {
+        var t = TALK[i];
+        if (t._kw.some(function (k) { return text.indexOf(k) !== -1; }) && (!m.best || m.score < 4)) return { type: "talk", talk: t };
+      }
+    }
+    if (m.ambiguous) return { type: "ambiguous", items: m.ambiguous };
+    if (m.best) return { type: "faq", item: m.best, others: m.others };
+    return { type: "fallback" };
+  }
+
+  /* ---------- 表示用ヘルパー ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function format(s) {
+    return esc(s)
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+      .replace(/([\w.+-]+@[\w-]+\.[\w.]+)/g, '<a href="mailto:$1">$1</a>')
+      .replace(/\n/g, "<br>");
+  }
+  function el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function byId(id) { for (var i = 0; i < FAQS.length; i++) if (FAQS[i].id === id) return FAQS[i]; return null; }
+
+  /* ---------- ウィジェット構築 ---------- */
+  var root = el("div", "cb-root");
+  if (C.themeColor) root.style.setProperty("--cb-color", C.themeColor);
+  root.innerHTML =
+    '<button class="cb-launcher" type="button" aria-label="' + esc(C.launcherLabel || "チャットで質問") + '" aria-expanded="false">' +
+      '<svg class="cb-ico-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="currentColor"/><circle cx="8" cy="11" r="1.4" fill="#fff"/><circle cx="12" cy="11" r="1.4" fill="#fff"/><circle cx="16" cy="11" r="1.4" fill="#fff"/></svg>' +
+      '<svg class="cb-ico-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>' +
+      '<span class="cb-launcher-label">' + esc(C.launcherLabel || "チャットで質問") + '</span>' +
+    '</button>' +
+    '<section class="cb-window" role="dialog" aria-label="チャットサポート" hidden>' +
+      '<header class="cb-header">' +
+        '<div class="cb-avatar" aria-hidden="true">' + esc(C.avatar || "🤖") + '</div>' +
+        '<div class="cb-titles"><div class="cb-title">' + esc(C.botName || "サポート") + '</div>' +
+        '<div class="cb-sub"><span class="cb-dot"></span>' + esc(C.shopName || "") + '</div></div>' +
+        '<button class="cb-reset" type="button" title="最初からやり直す" aria-label="最初からやり直す">↺</button>' +
+        '<button class="cb-close" type="button" aria-label="閉じる">×</button>' +
+      '</header>' +
+      '<div class="cb-log" aria-live="polite"></div>' +
+      '<div class="cb-scrim" hidden></div>' +
+      '<div class="cb-sheet" hidden role="dialog" aria-label="メニュー">' +
+        '<div class="cb-sheet-head"><span class="cb-sheet-title">メニュー</span><button class="cb-sheet-close" type="button" aria-label="メニューを閉じる">×</button></div>' +
+        '<div class="cb-sheet-body"></div>' +
+      '</div>' +
+      '<form class="cb-form" autocomplete="off">' +
+        '<button class="cb-menu-toggle" type="button" aria-label="メニューを開く" aria-expanded="false">☰<span>メニュー</span></button>' +
+        '<input class="cb-input" type="text" placeholder="' + esc(C.placeholder || "ご質問を入力してください") + '" aria-label="メッセージ" maxlength="200">' +
+        '<button class="cb-send" type="submit" aria-label="送信"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z" fill="currentColor"/></svg></button>' +
+      '</form>' +
+      '<div class="cb-foot">' + esc(C.footerText || "自動応答です。") + '</div>' +
+    '</section>';
+
+  function mount() {
+    document.body.appendChild(root);
+    var launcher = root.querySelector(".cb-launcher");
+    var win = root.querySelector(".cb-window");
+    var log = root.querySelector(".cb-log");
+    var form = root.querySelector(".cb-form");
+    var input = root.querySelector(".cb-input");
+    var started = false, busy = false;
+    var sheet = root.querySelector(".cb-sheet"), sheetBody = root.querySelector(".cb-sheet-body");
+    var toggle = root.querySelector(".cb-menu-toggle");
+    var scrim = root.querySelector(".cb-scrim");
+    var CATS = (C.categories || []).filter(function (c) { return c && c.faqs && c.faqs.length; });
+    function catById(id) { for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i]; return null; }
+    function catLabel(c) { return (c.icon ? c.icon + " " : "") + c.label; }
+
+    function scroll() {
+      var go = function () { log.scrollTop = log.scrollHeight; };
+      go(); requestAnimationFrame(function () { go(); requestAnimationFrame(go); }); setTimeout(go, 150); setTimeout(go, 450);
+    }
+    function addUser(text) {
+      var row = el("div", "cb-row cb-user");
+      row.appendChild(el("div", "cb-bubble", esc(text)));
+      log.appendChild(row); scroll();
+    }
+    function botRow(extraCls) {
+      var row = el("div", "cb-row cb-bot" + (extraCls ? " " + extraCls : ""));
+      if (!C.showMessageAvatar) return { row: row, col: row };
+      row.classList.add("cb-with-avatar");
+      row.appendChild(el("div", "cb-msg-avatar", esc(C.avatar || "🤖"))).setAttribute("aria-hidden", "true");
+      var col = el("div", "cb-col"); row.appendChild(col);
+      return { row: row, col: col };
+    }
+    function addBot(html, extras) {
+      var r = botRow();
+      r.col.appendChild(el("div", "cb-bubble", html));
+      if (extras) r.col.appendChild(extras);
+      log.appendChild(r.row);
+      // 長い回答は、回答の先頭が見えるようにスクロール
+      var top = function () { if (r.row.offsetHeight > log.clientHeight - 16) log.scrollTop = r.row.offsetTop - log.offsetTop - 8; else log.scrollTop = log.scrollHeight; };
+      top(); requestAnimationFrame(top); setTimeout(top, 150);
+    }
+    function chips(items) {
+      var wrap = el("div", "cb-chips");
+      items.forEach(function (it) {
+        var btn = el("button", "cb-chip" + (it.cls ? " " + it.cls : ""), esc(it.label));
+        btn.type = "button";
+        btn.addEventListener("click", function () { if (busy) return; if (it.action) it.action(); else ask(it.label, it.id); });
+        wrap.appendChild(btn);
+      });
+      return wrap;
+    }
+    function menuChip() { return chips([{ label: C.menuLabel || "☰ ほかの項目を見る", cls: "cb-back", action: function () { openSheet(); } }]); }
+    function linkButtons(links) {
+      var wrap = el("div", "cb-links");
+      links.forEach(function (l) {
+        var a = el("a", "cb-link", esc(l.label)); a.href = l.url;
+        if (/^https?:/.test(l.url)) { a.target = "_blank"; a.rel = "noopener"; }
+        wrap.appendChild(a);
+      });
+      return wrap;
+    }
+    function typing(ms, done) {
+      busy = true;
+      var r = botRow("cb-typing-row");
+      r.col.appendChild(el("div", "cb-bubble cb-typing", "<span></span><span></span><span></span>"));
+      log.appendChild(r.row); scroll();
+      setTimeout(function () { r.row.remove(); busy = false; done(); }, ms);
+    }
+
+    /* ---------- メニュー（☰ を押したときだけ表示） ---------- */
+    function closeSheet() { sheet.hidden = true; scrim.hidden = true; toggle.setAttribute("aria-expanded", "false"); scroll(); }
+    scrim.addEventListener("click", closeSheet);
+    input.addEventListener("focus", function () { if (!sheet.hidden) closeSheet(); });
+    input.addEventListener("pointerdown", function () { if (!sheet.hidden) closeSheet(); });
+    function sheetBtn(label, cls, fn) {
+      var b = el("button", "cb-chip " + cls, esc(label)); b.type = "button";
+      b.addEventListener("click", function () { if (!busy) fn(); });
+      return b;
+    }
+    function openSheet(catId) {
+      sheetBody.innerHTML = "";
+      var c = typeof catId === "string" ? catById(catId) : null;
+      var list = el("div", "cb-sheet-list");
+      if (c) {
+        list.appendChild(sheetBtn("◀ 項目一覧にもどる", "cb-back", function () { openSheet(); }));
+        list.appendChild(el("div", "cb-hint", esc(catLabel(c))));
+        c.faqs.map(byId).filter(Boolean).forEach(function (f) {
+          list.appendChild(sheetBtn(f.title, "cb-q-btn", function () { closeSheet(); ask(f.title, f.id); }));
+        });
+      } else {
+        CATS.forEach(function (cc) { list.appendChild(sheetBtn(catLabel(cc), "cb-menu-btn", function () { openSheet(cc.id); })); });
+      }
+      sheetBody.appendChild(list);
+      sheet.style.bottom = Math.max(0, win.getBoundingClientRect().bottom - form.getBoundingClientRect().top) + "px";
+      scrim.style.bottom = sheet.style.bottom; scrim.hidden = false;
+      sheet.hidden = false; toggle.setAttribute("aria-expanded", "true"); sheetBody.scrollTop = 0;
+    }
+    toggle.addEventListener("click", function () { if (sheet.hidden) openSheet(); else closeSheet(); });
+    root.querySelector(".cb-sheet-close").addEventListener("click", closeSheet);
+
+    /* ---------- 回答の表示 ---------- */
+    function showFaq(item, others) {
+      var box = el("div", "cb-extras");
+      if (item.links && item.links.length) box.appendChild(linkButtons(item.links));
+      var nextItems = (item.next || []).map(byId).filter(Boolean).slice(0, C.nextLimit || 3);
+      var ids = nextItems.map(function (f) { return f.id; }).concat([item.id]);
+      (others || []).forEach(function (f) { if (ids.indexOf(f.id) === -1) { nextItems.push(f); ids.push(f.id); } });
+      if (nextItems.length) {
+        box.appendChild(el("div", "cb-hint", esc(C.relatedHint || "関連する項目：")));
+        box.appendChild(chips(nextItems.map(function (f) { return { label: f.title, id: f.id }; })));
+      }
+      box.appendChild(menuChip());
+      addBot('<div class="cb-ans-title">' + esc(item.title) + '</div>' + format(item.answer), box);
+      root.dispatchEvent(new CustomEvent("chatbot:answer", { detail: { id: item.id } }));
+    }
+    function showText(text, withLinks, id) {
+      var box = el("div", "cb-extras");
+      if (withLinks) {
+        var c = C.contact || {};
+        if (c.links && c.links.length) box.appendChild(linkButtons(c.links));
+        if (c.phoneHours) box.appendChild(el("div", "cb-hint", esc(c.phoneHours)));
+      }
+      box.appendChild(chips([{ label: "☰ メニューを開く", cls: "cb-back", action: function () { openSheet(); } }]));
+      addBot(format(text), box);
+      root.dispatchEvent(new CustomEvent("chatbot:answer", { detail: { id: id || null } }));
+    }
+    var L = C.labels || {};
+    function respond(text, forcedId) {
+      if (forcedId && byId(forcedId)) return showFaq(byId(forcedId), []);
+      var r = decide(text);
+      switch (r.type) {
+        case "faq": return showFaq(r.item, r.others);
+        case "talk": return showText(r.talk.answer, false, "talk:" + r.talk.id);
+        case "ambiguous": {
+          var box = el("div", "cb-extras");
+          box.appendChild(chips(r.items.map(function (f) { return { label: f.title, id: f.id, cls: "cb-q-btn" }; })));
+          box.appendChild(menuChip());
+          addBot(format(L.ambiguous || "どちらについてのご質問でしょうか。"), box);
+          root.dispatchEvent(new CustomEvent("chatbot:answer", { detail: { id: "ambiguous:" + r.items.map(function (f) { return f.id; }).join(",") } }));
+          return;
+        }
+        case "short": return showText(L.short || "ご質問の内容を、もう少し詳しく入力してください。", false, "short");
+        default: {
+          var fb = C.fallbackMessage; fb = Array.isArray(fb) ? fb[0] : fb;
+          return showText(fb, true, null);
+        }
+      }
+    }
+    function ask(text, forcedId) {
+      text = String(text || "").trim();
+      if (!text) return;
+      addUser(text);
+      typing(400 + Math.min(text.length * 10, 400), function () { respond(text, forcedId); });
+    }
+    function welcome() {
+      log.innerHTML = ""; closeSheet();
+      typing(300, function () { addBot(format(C.welcomeMessage || "こんにちは。"), null); });
+    }
+
+    function isTouch() { return window.matchMedia && window.matchMedia("(pointer: coarse)").matches; }
+    function isPhone() { return window.matchMedia && window.matchMedia("(max-width: 480px)").matches; }
+    function fitViewport() {
+      var vv = window.visualViewport;
+      if (!vv || win.hidden || !isPhone()) { win.style.height = ""; win.style.top = ""; return; }
+      win.style.height = vv.height + "px"; win.style.top = vv.offsetTop + "px"; scroll();
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", fitViewport);
+      window.visualViewport.addEventListener("scroll", fitViewport);
+    }
+    function setOpen(open) {
+      win.hidden = !open;
+      document.documentElement.classList.toggle("cb-lock", open && isPhone());
+      fitViewport();
+      root.classList.toggle("cb-open", open);
+      launcher.setAttribute("aria-expanded", String(open));
+      if (open) {
+        if (!started) { started = true; welcome(); }
+        if (!isTouch()) setTimeout(function () { input.focus(); }, 50);
+      }
+    }
+    launcher.addEventListener("click", function () { setOpen(win.hidden); });
+    root.querySelector(".cb-close").addEventListener("click", function () { setOpen(false); });
+    root.querySelector(".cb-reset").addEventListener("click", function () { if (!busy) welcome(); });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); if (busy) return;
+      var v = input.value; input.value = ""; ask(v);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape" || win.hidden) return;
+      if (!sheet.hidden) { closeSheet(); toggle.focus(); return; }
+      setOpen(false);
+    });
+    window.Chatbot = {
+      open: function () { setOpen(true); },
+      close: function () { setOpen(false); },
+      ask: function (t) { setOpen(true); ask(t); },
+      match: match,
+      decide: function (t) { var r = decide(t); return { type: r.type, id: r.item ? r.item.id : r.talk ? "talk:" + r.talk.id : null, items: r.items ? r.items.map(function (f) { return f.id; }) : null }; },
+      menu: function (id) { setOpen(true); openSheet(id); },
+    };
+    if (/[#&?]open\b/.test(location.hash + location.search)) setOpen(true);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
+  else mount();
+})();
+
+</script>
+<!-- ▲▲ 支援者向けQ&A ここまで ▲▲ -->
+</head>
+<body>
+  <noscript><div style="background:#fde2e2;color:#7a1f1f;padding:12px 6vw;font-size:15px;">このページのチャットは JavaScript が必要です。Safari や Chrome などのブラウザで開いてください。</div></noscript>
+  <div class="demo-banner" role="note"><strong>⚠️ 非公式の試作版（デモ）です。</strong> ふらっと・社会福祉法人 独歩の公式ページではありません。回答は、ふらっとの説明会資料と管理者への聞き取りをもとに作成しています。</div>
+  <header class="site">
+    <div class="sub">さいたま市発達障害者社会参加事業</div>
+    <div class="logo">🌿 ふらっと ── 支援者の方へ</div>
+  </header>
+  <main>
+    <h1>相談支援に携わる皆さまへ</h1>
+    <p>ふらっとの事業内容・対象者・利用までの流れなど、毎月の説明会でお伝えしている内容を、チャットでご確認いただけます。</p>
+    <div class="card">
+      <h2>使い方</h2>
+      右下の「支援者向けQ&amp;A」ボタンを押し、ご質問を入力するか「☰ メニュー」から項目をお選びください。
+      <br><button class="open-btn" type="button" onclick="window.Chatbot &amp;&amp; Chatbot.open()">Q&amp;A を開く</button>
+    </div>
+    <div class="card">
+      <h2>ご利用の相談・見学のご希望</h2>
+      さいたま市発達障害者支援センターへご連絡ください。
+    </div>
+  </main>
+  <footer>非公式の試作版 ／ 最新情報は発達障害者支援センターへご確認ください。</footer>
+</body>
+</html>
