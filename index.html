@@ -98,6 +98,7 @@ body.in-party .card:not([data-ok]){opacity:.45}
 <script>
 (function () {
   var GAMES = [
+    { path: 'mogitate-kajuen', icon: '🍎', bg: '#fde2dc', title: 'もぎたて果樹園', sub: '〜果物チップで果樹を買おう〜', desc: '果物チップを集めて果樹を買い、来園者を迎えて15収穫点を目指す。ひとり・1台・オンライン。🐻🐰🤖😺🐶🦊もCPUで参加', n: '2〜4人', tags: ['on', 'loc', 'vs', 'cpu'], isNew: 1, nested: 1 },
     { path: 'mojikakushi-battle', icon: '🀄', bg: '#ece6ff', title: 'もじかくしバトル', sub: '〜1文字ずつ攻撃して言葉を当てよう〜', desc: 'お題にそった言葉をこっそりかくして、五十音から1文字ずつ攻撃！ 全部の文字を当てられたら脱落、最後まで残った人の勝ち。🐻🐰🤖😺🐶🦊とも対戦できるよ', n: '2〜5人', tags: ['on', 'pt', 'cpu'], isNew: 1 },
     { path: 'iranai-kuma', icon: '🃏', bg: '#ffe0c2', title: 'いらないクマ！', desc: 'いらないカードはチップで「いらないクマ！」。がまんくらべのカードゲーム', n: '3〜7人', tags: ['on', 'vs', 'cpu'] },
     { path: 'oboete-order', icon: '☕', bg: '#f3dcc4', title: 'おぼえてオーダー！', sub: '〜ふーさんの森カフェ〜', desc: 'みんなでお客さんの注文をおぼえて、手札をなくそう', n: '2〜6人', tags: ['on', 'co', 'pt'] },
@@ -131,7 +132,7 @@ body.in-party .card:not([data-ok]){opacity:.45}
   function render() {
     var list = GAMES.filter(function (g) { return cur === 'all' || g.tags.indexOf(cur) >= 0; });
     document.getElementById('grid').innerHTML = list.map(function (g) {
-      return '<a class="card" href="/' + g.path + '/?from=portal" data-game="' + g.path + '"' + (window.FuuParty && FuuParty.ready.indexOf(g.path) >= 0 ? ' data-ok="1"' : '') + '>' +
+      return '<a class="card" href="' + (g.nested ? '' : '/') + g.path + '/?from=portal" data-game="' + g.path + '"' + (window.FuuParty && FuuParty.ready.indexOf(g.path) >= 0 ? ' data-ok="1"' : '') + '>' +
         '<div class="ic" style="--bg:' + g.bg + '" aria-hidden="true">' + g.icon + '</div>' +
         '<div class="bd"><div class="ttl">' + (g.isNew ? '<span class="newb">NEW</span>' : '') + esc(g.title) + (g.sub ? '<small>' + esc(g.sub) + '</small>' : '') + '</div>' +
         '<div class="ds">' + esc(g.desc) + '</div><div class="tags"><span class="tag n">👥 ' + g.n + '</span>' +

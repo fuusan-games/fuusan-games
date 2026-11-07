@@ -6,6 +6,7 @@
 
 | ゲーム | 人数 | |
 |---|---|---|
+| [もぎたて果樹園](https://fuusan-games.github.io/fuusan-games/mogitate-kajuen/) | 2〜4人 | オンライン／1台・対戦（ひろば内） |
 | [いらないクマ！](https://fuusan-games.github.io/iranai-kuma/) | 3〜7人 | オンライン・対戦 |
 | [おぼえてオーダー！〜ふーさんの森カフェ〜](https://fuusan-games.github.io/oboete-order/) | 2〜6人 | オンライン・協力 |
 | [封魔の刻](https://fuusan-games.github.io/fuuma-no-toki/) | 1〜5人 | オンライン・協力 |
