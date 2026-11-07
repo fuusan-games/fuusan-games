@@ -6,6 +6,7 @@
 (function () {
   'use strict';
   var GAMES = [
+    ['mogitate-kajuen', '🍎', 'もぎたて果樹園'],
     ['shitterukko', '🤫', 'しってるっこ'], ['hentekko-paint', '🖍️', 'へんてこペイント'], ['mojikakushi-battle', '🀄', 'もじかくしバトル'], ['iranai-kuma', '🃏', 'いらないクマ！'],
     ['zurekko', '🐺', 'ずれっこ'], ['oboete-order', '☕', 'おぼえてオーダー！'], ['fuuma-no-toki', '👿', '封魔の刻'],
     ['tatoete-narabe', '💬', 'たとえてナラベ！'], ['mienai-meiro', '🌙', 'みえない迷路'], ['moribiraki', '🌲', 'もりびらき'],
@@ -16,7 +17,7 @@
     ['niwatoridori', '🐔', 'ニワトリドリ'], ['flat-creatures', '🐲', 'ふらっとクリーチャーズ（2人）'], ['genjuu-duel', '🐉', '幻獣デュエル（2人）']
   ];
   // パーティー対応済みのゲーム（順次ふやす）
-  var READY = ['shitterukko', 'mojikakushi-battle', 'hentekko-paint', 'iranai-kuma', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin', 'moribiraki', 'flat-creatures', 'genjuu-duel'];
+  var READY = ['mogitate-kajuen', 'shitterukko', 'mojikakushi-battle', 'hentekko-paint', 'iranai-kuma', 'zurekko', 'todoke-koibumi', 'sukusuku-garden', 'oukoku-souha', 'niwatoridori', 'koroiro', 'nanamekuri', 'gomoji-pitari', 'yobigoe-yakata', 'oboete-order', 'fuuma-no-toki', 'tatoete-narabe', 'mienai-meiro', 'oboeteru-watashi', 'hitokoto-hint', 'kakutori-jin', 'iro-tile-koubou', 'suuretsu-jin', 'moribiraki', 'flat-creatures', 'genjuu-duel'];
   var HUB = 'fuusan-games';
   var SS = 'fuu-party';
   var Q = new URLSearchParams(location.search);
@@ -26,13 +27,21 @@
   else { try { info = JSON.parse(sessionStorage.getItem(SS)); } catch (e) {} }
   if (info && norm(info.code).length !== 4) info = null;
   if (info) { try { sessionStorage.setItem(SS, JSON.stringify(info)); } catch (e) {} }
-  // サイトの一番上（/ か /リポジトリ名の親）。/<game>/ の1つ上
-  var segs = location.pathname.split('/'); segs.splice(-2, 2);
-  var ROOT = segs.join('/') + '/';
+  // ひろばの中にあるゲーム。URL は /<hub>/mogitate-kajuen/ （party.js の隣）。ほかのゲームはひろばの1つ上。
+  var NESTED = { 'mogitate-kajuen': 1 };
+  // party.js 自身のディレクトリがひろばのルート（/fuusan-games/ または /）
+  var HUB_ROOT = (function () {
+    var s = document.currentScript;
+    try { if (s && s.src) return new URL(s.src, location.href).pathname.replace(/[^/]*$/, ''); } catch (e) {}
+    return '/' + HUB + '/';
+  })();
+  function up(dir) { return dir.replace(/[^/]+\/$/, '') || '/'; }
+  var SITE = up(HUB_ROOT);
   var keep = ['ice', 'peerhost', 'peerport', 'peerpath', 'turbo'];
   function urlFor(game, inf) {
     inf = inf || info;
-    var u = ROOT + game + '/?party=' + inf.code + '&pn=' + encodeURIComponent(inf.name) + (inf.host ? '&ph=1' : '');
+    var base = game === HUB ? HUB_ROOT : (NESTED[game] ? HUB_ROOT + game + '/' : SITE + game + '/');
+    var u = base + '?party=' + inf.code + '&pn=' + encodeURIComponent(inf.name) + (inf.host ? '&ph=1' : '');
     keep.forEach(function (k) { if (Q.get(k) != null) u += '&' + k + '=' + encodeURIComponent(Q.get(k)); });
     return u;
   }
